@@ -1,0 +1,74 @@
+﻿@model IEnumerable<Cl3AndreeChiquis.Models.Articulos>
+
+@{
+    ViewData["Title"] = "IndexArticulos";
+}
+
+<h1>Dar de Baja a los Articulos</h1>
+
+@using (Html.BeginForm())
+{
+    <div>
+        @Html.Label("Codigo o Nombre: ")
+        @Html.TextBox("filtro", ViewBag.Filtro as string)
+        <input type="submit" value="Buscar" class="btn btn-success"/>
+    </div>
+}
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="mt-3 mx-auto table align-middle table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.cod_art)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.nom_art)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.uni_med)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.pre_art)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.stk_art)
+            </th>
+            <th>Imagen</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.cod_art)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.nom_art)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.uni_med)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.pre_art)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.stk_art)
+            </td>
+                <td>
+                    <img src="@Url.Content("/articulos/" + item.cod_art + ".jpg" )"
+                         alt="@item.cod_art"
+                         style="width:80px; height:80px;" />
+                </td>
+            <td>
+                @Html.ActionLink("Dar de Baja", "DeleteArticulos",
+                new { id = item.cod_art},
+                new { @class = "btn btn-warning"})
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

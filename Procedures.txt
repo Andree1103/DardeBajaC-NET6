@@ -1,0 +1,52 @@
+
+
+--- Preocdure Para dar de Baja
+
+CREATE OR ALTER PROCEDURE DAR_BAJA
+    @COD_ART CHAR(5)
+AS
+BEGIN
+    -- Variables locales
+    DECLARE @STK_ART INT;
+    DECLARE @PRE_ART DECIMAL(7,2);
+
+    -- Obtener el stock y precio del artículo
+    SELECT @STK_ART = stk_art, @PRE_ART = pre_art
+    FROM tb_articulos
+    WHERE cod_art = @COD_ART;
+
+    -- Actualizar el artículo como dado de baja
+    UPDATE tb_articulos
+    SET de_baja = 'SI'
+    WHERE cod_art = @COD_ART;
+
+    -- Insertar en la tabla de artículos dados de baja
+    INSERT INTO tb_articulos_baja (cod_art, fecha_baja)
+    VALUES (@COD_ART, GETDATE());
+
+    -- Insertar en la tabla de artículos en liquidación (si el stock es mayor a cero)
+    IF @STK_ART > 0
+    BEGIN
+        INSERT INTO tb_articulos_liquidacion (cod_art, unidades_liquidar, precio_liquidar)
+        VALUES (@COD_ART, @STK_ART, @PRE_ART);
+    END;
+END;
+
+exec DAR_BAJA 'A0004'
+
+
+
+-- Procedure Para listar 
+
+
+CREATE OR ALTER PROCEDURE ListarArticulosPorNombreOCod
+    @filtro varchar(50)
+AS
+BEGIN
+    SELECT *
+    FROM tb_articulos
+    WHERE ((@filtro IS NULL OR @filtro = '') OR (nom_art LIKE '%' + @filtro + '%' OR cod_art LIKE '%' + @filtro + '%'))
+        AND de_baja = 'No';
+END;
+
+exec ListarArticulosPorNombreOCod 'tin'
